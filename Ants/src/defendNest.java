@@ -7,11 +7,11 @@ import java.util.Random;
 public class defendNest {
 
 	public static void main(String[] args) {
-		int numBadBoids = 5; // must be adjusted when adding circle boids
-		int numCircBoids = 5;
+		int numBadBoids = 0; // must be adjusted when adding circle boids
+		int numCircBoids = 15;
 		int numBoids = 1;
 		double maxSpeedDefender = .5;
-		double maxSpeedInvader = 1.25;
+		double maxSpeedInvader = .50;
 		float defenderFuel = 1800;
 		float invaderFuel = 1800;
 		Flock flock;
@@ -20,7 +20,7 @@ public class defendNest {
 		boolean circleBoids = false;
 		  
 	   try{
-	           outputStream = new PrintWriter( new FileOutputStream("D:\\AntRuns\\fixedrolesandsigruns\\ant_boids_fixedroles_sig_1vs10_speed125vs5.csv", true));
+	           outputStream = new PrintWriter( new FileOutputStream("D:\\AntRuns\\noflocks\\flexnosig\\ant_close_flex_nosig_15vs1_50vs5.csv", true));
 	           //outputStream.write("bird_name,longitude,latitude,acceleration,velocity,numNeighbors,avgDisttoNeighbor\n");
 	           outputStream.write("time,winner\n");
 	   }
@@ -39,9 +39,13 @@ public class defendNest {
 	  // Add some bad boids -- nest defenders at the moment
 	  Random rand = new Random();
 	  
+	  // previous value: 620, 620 -- obviously, tighter boundaries enables better defense for circle defenders.
+	  int boundX = 320; // guarantees ants start inside the rectangle 
+	  int boundY = 320;
+	  
 	  //50 is the maximum and the 1 is our minimum 
 	 for (int i = 0; i < numBadBoids; i++) {
-	     basicBoid t = new basicBoid((rand.nextInt(650-100)+100), (rand.nextInt(650-100)+100), "Patrol" + i, defenderFuel, outputStream);
+	     basicBoid t = new basicBoid((rand.nextInt(boundX-100)+100), (rand.nextInt(boundY-100)+100), "Patrol" + i, defenderFuel, outputStream);
 	     t.role = "patrol";
 	     //t.col = color(255,0,0);
 	     t.maxspeed = maxSpeedDefender;
@@ -52,7 +56,7 @@ public class defendNest {
 	 
 	 
 	 for (int i = 0; i < numCircBoids; i++) {
-	     basicBoid t = new basicBoid((rand.nextInt(650-100)+100), (rand.nextInt(650-100)+100), "Circle" + i, defenderFuel, outputStream);
+	     basicBoid t = new basicBoid((rand.nextInt(boundX-100)+100), (rand.nextInt(boundY-100)+100), "Circle" + i, defenderFuel, outputStream);
 	     t.role = "circle";
 	     //t.col = color(255,0,0);
 	     t.maxspeed = maxSpeedDefender;

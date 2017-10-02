@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public class Flock {
 	int time = 0;
-	double width = 650;
-	double height = 650;
+	double width = 1000;
+	double height = 1000;
 	PrintWriter outputStream = null;
 		
 	  ArrayList<basicBoid> boids; // An ArrayList for all the boids 

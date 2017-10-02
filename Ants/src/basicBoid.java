@@ -26,7 +26,13 @@ public class basicBoid {
 	
 	// write to file functionality
 	PrintWriter outputStream;
-	boolean roleChange = false; // allows circle and patrol behaviors
+	boolean roleChange = true; // allows circle and patrol behaviors
+	boolean sig = false; // allows signaling to occur
+	boolean noFlock = true; // turns off flocking behavior of defending birds -- however, we keep separation, still want birds to avoid colliding with one another
+	
+	// Nest center
+	int nestX = 320;
+	int nestY = 320;
 
 	basicBoid(double x, double y, String str, float fuelLevel, PrintWriter stream) { // basicBoid constructor
 		acceleration = new Vector2D(0, 0);
@@ -133,6 +139,11 @@ public class basicBoid {
 	      ali = ali.scale(.5); // 1.5 for P / E
 	      coh = coh.scale(1.0); // 2.0 for P/ E
 	      gol = gol.scale(2.0); // 2.0 for P / E
+	      
+	      if(noFlock && (this.role.equals("circle") || this.role.equals("patrol"))) { // zero out these factors
+	    	  ali = ali.scale(0);
+	    	  coh = coh.scale(0);
+	      }
 	    }
 	    // Add the force vectors to acceleration    
 	    applyForce(sep);
@@ -145,6 +156,7 @@ public class basicBoid {
 	      applyForce(circle);
 	    }
 	    else if(this.name.equals("Patrol")) { // don't add goal
+	    	
 	    }
 	    else {
 	      applyForce(gol); // other birds
@@ -193,8 +205,8 @@ public class basicBoid {
 	  // We are setting this circle
 	  Vector2D circleFlight() {
 	    
-	    float X = 320;
-	    float Y = 320;
+	    float X = nestX;
+	    float Y = nestY;
 	    Vector2D target = new Vector2D(X, Y);
 	    double orbitRadius = this.radius;
 
@@ -385,7 +397,7 @@ public class basicBoid {
 	  // Win condition for the invaders
 	  boolean checkWin() {
 		 int winProx = 10;
-		 int nestLoc = 1;
+		 int nestLoc = 0;
 	    // Adjust "win" distance as real bases are more than just a single point in space
 	    if(((position.dX > goals.get(nestLoc).dX - winProx) && position.dX < goals.get(nestLoc).dX + winProx) &&
 	            (position.dY > goals.get(nestLoc).dY - winProx && position.dY < goals.get(nestLoc).dY + winProx))
@@ -439,7 +451,8 @@ public class basicBoid {
 	            this.role = "patrol"; // change our role
 	            //this.col = color(48,139,206); // visually change our role (help us humans see things)
 	            //  add signal fellow agents here -- this will lead to other role changes
-	            signal(basicBoids); //,this.col);
+	            if(sig)
+	            	signal(basicBoids); //,this.col);
 	          } // end if within sensor range
 	        }  // end if circle
 	        else if(this.role.equals("patrol")) {
@@ -447,7 +460,8 @@ public class basicBoid {
 	          if(d <= sensorRange && other.role.equals("attack")) {
 	            changeToCirc = false; // we will continue pursuit role (patrol)
 	            applyForce((seek(other.position)).scale(2.5)); // move towards enemy (maybe)
-	            signal(basicBoids); //,this.col);
+	            if(sig)
+	            	signal(basicBoids); //,this.col);
 	          }
 	        } // else if patroller
 	      } // end else
